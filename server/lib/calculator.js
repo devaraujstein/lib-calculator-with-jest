@@ -1,4 +1,4 @@
-module.exports.sumTwoNumbers = (numberOne, numberTwo) => {
+export function sumTwoNumbers(numberOne, numberTwo) {
 
   // The plus signal before 'numberOne' and 'numberTwo' convert string value to integer
   // like parseInt(n) and Number(n),

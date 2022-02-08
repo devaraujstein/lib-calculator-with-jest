@@ -1,10 +1,10 @@
-module.exports.makeQueryString = (queryValues) => {
+export function makeQueryString(queryValues) {
   return Object.entries(queryValues)
     .map(keyValueToString)
     .join('&');
 }
 
-module.exports.makeObjectWithQueryString = (queryString) => {
+export function makeObjectWithQueryString(queryString) {
   return Object.fromEntries(
     queryString.split('&').map(string => {
 
