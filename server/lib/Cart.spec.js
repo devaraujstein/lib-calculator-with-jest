@@ -22,7 +22,7 @@ describe('Cart', () => {
   describe('getTotal()', () => {
 
     it('shoud return 0 when get getTotal() is executed in a newly created instance', () => {
-      expect(cart.getTotal()).toBe(0);
+      expect(cart.getTotal().getAmount()).toBe(0);
     });
   
     it('should multiply quantity and price and receive the total amount', () => {
@@ -33,7 +33,7 @@ describe('Cart', () => {
   
       cart.add(item);
   
-      expect(cart.getTotal()).toBe(70776);
+      expect(cart.getTotal().getAmount()).toBe(70776);
     });
   
     it('should ensure no more than one product exists at a time', () => {
@@ -48,7 +48,7 @@ describe('Cart', () => {
         quantity: 1
       });
   
-      expect(cart.getTotal()).toBe(35388);
+      expect(cart.getTotal().getAmount()).toBe(35388);
     });
   
     it('should update total when a product gets included and then removed', () => {
@@ -65,7 +65,7 @@ describe('Cart', () => {
   
       cart.remove(products[0]);
   
-      expect(cart.getTotal()).toBe(41872);
+      expect(cart.getTotal().getAmount()).toBe(41872);
     });
 
   });
@@ -99,7 +99,7 @@ describe('Cart', () => {
       });
 
       expect(cart.summary()).toMatchSnapshot();
-      expect(cart.getTotal()).toBeGreaterThan(0);
+      expect(cart.getTotal().getAmount()).toBeGreaterThan(0);
     });
 
     it('should reset the cart when checkout() is called', () => {
@@ -111,8 +111,28 @@ describe('Cart', () => {
 
       cart.checkout();
 
-      expect(cart.getTotal()).toBe(0);
+      expect(cart.getTotal().getAmount()).toBe(0);
     });
+  });
+
+  describe('special conditions', () => {
+
+    it('should apply percentage discount quantity above minimum is passed', () => {
+      const condition = {
+        percentage: 30,
+        minimum: 2
+      };
+
+      cart.add({
+        product: products[0],
+        condition,
+        quantity: 3
+      });
+
+      expect(cart.getTotal().getAmount()).toBe(74315);
+
+    });
+
   });
   
 
