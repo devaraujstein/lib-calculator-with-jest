@@ -27,13 +27,11 @@ export default class Cart {
 
   getTotal(){
     return this.items.reduce((previousValue, currentValue) => {
-      const amount = Money({amount: (currentValue.product.price * currentValue.quantity)})
-      let discount = Money({amount : 0});
 
-      if(currentValue.condition && currentValue.condition.percentage && currentValue.quantity > currentValue.condition.minimum){
-        discount = amount.percentage(currentValue.condition.percentage);
-      }
+      const amount = Money({amount: (currentValue.product.price * currentValue.quantity)});
 
+      let discount = calculateDiscount(currentValue, amount);
+      
       return previousValue.add(amount).subtract(discount);
     }, Money({amount: 0}));
   }
@@ -60,5 +58,35 @@ export default class Cart {
       items
     }
   }
+}
 
+const calculateDiscount = (currentValue, amount) => {
+
+  if(currentValue.condition?.quantity){
+    return calculateQuantityDiscount(currentValue, amount);
+  }
+
+  return calculatePercentageDiscount(currentValue, amount);
+}
+
+const calculatePercentageDiscount = (currentValue, amount) => {
+  
+  if(currentValue.condition?.percentage && currentValue.quantity > currentValue.condition.minimum){
+    return amount.percentage(currentValue.condition.percentage);
+  }
+
+  return Money({amount : 0});
+}
+
+const calculateQuantityDiscount = (currentValue, amount) => {
+
+  if(currentValue.condition?.quantity && currentValue.quantity > currentValue.condition.quantity){
+    return amount.percentage(isEven(currentValue) ? 50 : 40);
+  }
+
+  return Money({amount : 0});
+}
+
+const isEven = (currentValue) => {
+  return currentValue.quantity % 2 === 0;
 }
